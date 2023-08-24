@@ -16,18 +16,20 @@ public:
 
 private:
     static constexpr uint8_t ADDR_SIZE = 4;
+    static constexpr uint8_t CMD_SIZE = ADDR_SIZE + 28;
     static constexpr uint8_t MEM_SIZE = 16;
 
     static constexpr const char *FILE_NAME = "out.bin";
 
     using mem = std::array<uint32_t, MEM_SIZE>;
-    using in_pins = std::array<vsm::pin, ADDR_SIZE>;
-    using out_pins = std::array<vsm::pin, ADDR_SIZE + 28>;
+    using cmd_pins = std::array<vsm::pin, CMD_SIZE>;
+    using addr_pins = std::array<vsm::pin, ADDR_SIZE>;
 
 private:
-    in_pins _pins_D;
-    in_pins _pins_A;
-    out_pins _pins_C;
+    cmd_pins _pins_D;
+    addr_pins _pins_A;
+    cmd_pins _pins_C;
+    vsm::pin WR;
 
     mem _data;
 

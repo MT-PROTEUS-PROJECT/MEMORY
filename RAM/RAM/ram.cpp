@@ -5,6 +5,7 @@
 
 ram::ram()
 {
+    static_assert(sizeof(mem::value_type) * 8 >= CMD_SIZE);
     std::ranges::fill(_data, 0);
 }
 
@@ -47,6 +48,7 @@ VOID ram::setup(IINSTANCE *instance, IDSIMCKT *dsim)
     vsm::model::init_pins(_instance, _pins_D, "D");
     vsm::model::init_pins(_instance, _pins_A, "A");
     vsm::model::init_pins(_instance, _pins_C, "C");
+    WR.init(_instance, "WR");
 
     auto file_data = load_file();
     if (file_data.has_value())
@@ -56,10 +58,15 @@ VOID ram::setup(IINSTANCE *instance, IDSIMCKT *dsim)
 VOID ram::simulate(ABSTIME time, DSIMMODES mode)
 {
     auto addr = vsm::model::make_number(_pins_A);
-    std::bitset<sizeof(mem::value_type) * 8> bits(_data[addr]);
+    if (WR->isposedge())
+    {
+        _data[addr] = vsm::model::make_number(_pins_D);
+    }
+    
+    std::bitset<CMD_SIZE> bits(_data[addr]);
     for (size_t i = 0; i < _pins_C.size(); ++i)
     {
-        _pins_C[i].set(time, 50000, (bits[bits.size() - i - 1] == 1 ? SHI : SLO));
+        _pins_C[i].set(time, 50000, (bits[i] == 1 ? SHI : SLO));
     }
 }
 

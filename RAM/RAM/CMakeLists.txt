@@ -7,7 +7,7 @@ include(FetchContent)
 FetchContent_Declare(
   model_utils
   GIT_REPOSITORY https://github.com/MT-PROTEUS-PROJECT/model_utils
-  GIT_TAG        cb9fe66c89cade316b8a6ed0afadf9c05b901702
+  GIT_TAG        e9febc0ee740e430d902356103021b935fd1e380
 )
 FetchContent_MakeAvailable(model_utils)
 
