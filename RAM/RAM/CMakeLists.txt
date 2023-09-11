@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required (VERSION 3.20)
 
-add_library(ram SHARED ram.cpp)
-target_include_directories(ram PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(RAM SHARED ram.cpp)
+target_include_directories(RAM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(FetchContent)
 FetchContent_Declare(
@@ -11,6 +11,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(model_utils)
 
-target_link_libraries(ram PRIVATE model_utils)
+target_link_libraries(RAM PRIVATE model_utils)
 
-set_property(TARGET ram PROPERTY CXX_STANDARD 23)
+set_property(TARGET RAM PROPERTY CXX_STANDARD 23)

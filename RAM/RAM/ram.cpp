@@ -3,16 +3,16 @@
 #include <fstream>
 #include <bitset>
 
-ram::ram()
+RAM::RAM()
 {
     static_assert(sizeof(mem::value_type) * 8 >= CMD_SIZE);
     std::ranges::fill(_data, 0);
 }
 
-std::optional<ram::mem> ram::load_file()
+std::optional<RAM::mem> RAM::load_file()
 {
-    ram::mem data;
-    static std::regex reg(R"(([0-9a-fA-F]+)\t([0-9a-fA-F]+))");
+    RAM::mem data;
+    static std::regex reg(R"(([0-9a-fA-F]+)\t([0-9a-fA-F]+)[\r]*)");
 
     std::ifstream file(FILE_NAME, std::ios::in | std::ios::binary);
     if (!file)
@@ -41,7 +41,7 @@ std::optional<ram::mem> ram::load_file()
     return data;
 }
 
-VOID ram::setup(IINSTANCE *instance, IDSIMCKT *dsim)
+VOID RAM::setup(IINSTANCE *instance, IDSIMCKT *dsim)
 {
     _instance = instance;
 
@@ -55,7 +55,7 @@ VOID ram::setup(IINSTANCE *instance, IDSIMCKT *dsim)
         std::swap(_data, file_data.value());
 }
 
-VOID ram::simulate(ABSTIME time, DSIMMODES mode)
+VOID RAM::simulate(ABSTIME time, DSIMMODES mode)
 {
     auto addr = vsm::model::make_number(_pins_A);
     if (WR->isposedge())
@@ -74,11 +74,11 @@ extern "C"
 {
     IDSIMMODEL __declspec(dllexport) *createdsimmodel(CHAR *device, ILICENCESERVER *license_server)
     {
-        return license_server->authorize(ram::MODEL_KEY) ? new ram : nullptr;
+        return license_server->authorize(RAM::MODEL_KEY) ? new RAM : nullptr;
     }
 
     VOID __declspec(dllexport) deletedsimmodel(IDSIMMODEL *model)
     {
-        delete static_cast<ram *>(model);
+        delete static_cast<RAM *>(model);
     }
 }

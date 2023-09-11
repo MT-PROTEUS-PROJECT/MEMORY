@@ -1,5 +1,5 @@
-﻿cmake_minimum_required (VERSION 3.20)
+﻿cmake_minimum_required(VERSION 3.20)
 
-project ("RAM")
+project(RAM LANGUAGES CXX)
 
-add_subdirectory (RAM)
+add_subdirectory(RAM)

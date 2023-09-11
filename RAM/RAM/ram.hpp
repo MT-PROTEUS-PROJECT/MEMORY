@@ -9,7 +9,7 @@
 #include <ranges>
 #include <regex>
 
-class ram final : public vsm::model
+class RAM final : public vsm::model
 {
 public:
     static constexpr DWORD MODEL_KEY = 0x00000001;
@@ -37,11 +37,11 @@ public:
     std::optional<mem> load_file();
 
 public:
-    ram();
+    RAM();
 
     VOID setup(IINSTANCE *instance, IDSIMCKT *dsim) override;
 
     VOID simulate(ABSTIME time, DSIMMODES mode) override;
 
-    ~ram() = default;
+    ~RAM() = default;
 };
