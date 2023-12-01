@@ -41,7 +41,7 @@ std::optional<RAM::mem> RAM::load_file()
     return data;
 }
 
-VOID RAM::setup(IINSTANCE *instance, IDSIMCKT *dsim)
+VOID RAM::setup(IINSTANCE* instance, IDSIMCKT* dsim)
 {
     _instance = instance;
 
@@ -62,7 +62,7 @@ VOID RAM::simulate(ABSTIME time, DSIMMODES mode)
     {
         _data[addr] = vsm::model::make_number(_pins_D);
     }
-    
+
     std::bitset<CMD_SIZE> bits(_data[addr]);
     for (size_t i = 0; i < _pins_C.size(); ++i)
     {
@@ -72,13 +72,13 @@ VOID RAM::simulate(ABSTIME time, DSIMMODES mode)
 
 extern "C"
 {
-    IDSIMMODEL __declspec(dllexport) *createdsimmodel(CHAR *device, ILICENCESERVER *license_server)
+    IDSIMMODEL __declspec(dllexport)* createdsimmodel(CHAR* device, ILICENCESERVER* license_server)
     {
         return license_server->authorize(RAM::MODEL_KEY) ? new RAM : nullptr;
     }
 
-    VOID __declspec(dllexport) deletedsimmodel(IDSIMMODEL *model)
+    VOID __declspec(dllexport) deletedsimmodel(IDSIMMODEL* model)
     {
-        delete static_cast<RAM *>(model);
+        delete static_cast<RAM*>(model);
     }
 }
