@@ -15,22 +15,22 @@ public:
     static constexpr DWORD MODEL_KEY = 0x00000001;
 
 private:
-    static constexpr uint8_t ADDR_SIZE = 4;
-    static constexpr uint8_t ADDR_RAM_SIZE = 10;
     static constexpr uint8_t CMD_SIZE = 42;
+    static constexpr uint16_t MEM_SIZE = 1024;
+
+    static constexpr uint8_t ADDR_BC1_SIZE = 4;
+    static constexpr uint8_t ADDR_RAM_SIZE = 10;
     static constexpr uint8_t WORD_SIZE = 8;
     static constexpr uint8_t CONTROL_SIZE = 9;
-    static constexpr uint8_t MEM_SIZE = 1024;
-    static constexpr uint8_t REGISTER_SIZE = 14;
+    static constexpr uint8_t CA_SIZE = 4;
     static constexpr uint8_t SHIFT_SIZE = 2;
     static constexpr const char *FILE_NAME = "out.bin";
 
-    using mem = std::array<uint32_t, MEM_SIZE>;
-    using cmd_pins = std::array<vsm::pin, CMD_SIZE>;
-    using addr_pins = std::array<vsm::pin, ADDR_SIZE>;
+    using mem = std::array<uint64_t, MEM_SIZE>;
     using word_pins = std::array<vsm::pin, WORD_SIZE>;
+    using addr_pins = std::array<vsm::pin, ADDR_BC1_SIZE>;
     using control_pins = std::array<vsm::pin, CONTROL_SIZE>;
-    using register_pins = std::array<vsm::pin, REGISTER_SIZE>;
+    using ca_pins = std::array<vsm::pin, CA_SIZE>;
     using shift = std::array<vsm::pin, SHIFT_SIZE>;
     using ram_pins = std::array<vsm::pin, ADDR_RAM_SIZE>;
 
@@ -40,9 +40,10 @@ private:
     addr_pins _pins_IB;
     word_pins _pins_ID;
     control_pins _pins_II;
-    register_pins _pins_IK;
     shift _pins_IM;
-    ram_pins _pins_T;
+    ca_pins _pins_ICA;
+    ram_pins _pins_IAR;
+    ram_pins _pins_IT;
     
     vsm::pin IC0;
     vsm::pin WR;
@@ -52,11 +53,11 @@ private:
     addr_pins _pins_B;
     word_pins _pins_D;
     control_pins _pins_I;
-    register_pins _pins_K;
     shift _pins_M;
+    ca_pins _pins_CA;
+    ram_pins _pins_AR;
 
     vsm::pin C0;
-    
 
     mem _data;
 

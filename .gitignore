@@ -3,3 +3,5 @@ out/
 Project Backups/
 Model.pdsprj.*
 *.dll
+*.bin
+*.json
