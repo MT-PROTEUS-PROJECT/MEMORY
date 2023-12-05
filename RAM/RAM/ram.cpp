@@ -2,42 +2,65 @@
 
 #include <fstream>
 #include <bitset>
+#include <algorithm>
+#include <filesystem>
 
 RAM::RAM()
 {
     static_assert(sizeof(mem::value_type) * 8 >= CMD_SIZE);
-    std::ranges::fill(_data, 0);
+    std::fill(_data.begin(), _data.end(), 0);
 }
 
 std::optional<RAM::mem> RAM::load_file()
 {
     mem data;
+    std::fill(data.begin(), data.end(), 0);
+
     static std::regex reg(R"(([0-9a-fA-F]+)\t([0-9a-fA-F]+)\t([0-9a-fA-F]+)[\r]*)");
-
-    std::ifstream file(FILE_NAME, std::ios::in | std::ios::binary);
-    if (!file)
-        return {};
-
-    std::string line;
-    std::smatch reg_match;
-    size_t i = 0;
-    for (; std::getline(file, line); )
+    std::filesystem::directory_iterator it;
+    std::string path = std::filesystem::current_path().string();
+    try
     {
-        if (!std::regex_match(line, reg_match, reg))
-            continue;
-
-        auto addr = std::stoul(reg_match[2]);
-
-        auto index = std::stoul(reg_match[1]);
-        data[index] = addr;
-        data[index] <<= 32;
-        data[index] += std::stoul(reg_match[3]);
-
-        if (++i; i >= MEM_SIZE)
-            break;
+        it = std::filesystem::directory_iterator(path);
+    }
+    catch (const std::exception &)
+    {
+        _instance->log((CHAR *)("MEMORY: failed to open dir: " + path).data());
+        return {};
     }
 
-    return data;
+    for (const auto& dirEntry : it)
+    {
+        if (dirEntry.path().extension() != FILE_NAME_EXT)
+            continue;
+
+        std::ifstream file(dirEntry.path().string(), std::ios::in | std::ios::binary);
+        if (!file)
+            continue;
+
+        std::string line;
+        std::smatch reg_match;
+        size_t i = 0;
+        for (; std::getline(file, line); )
+        {
+            if (!std::regex_match(line, reg_match, reg))
+                continue;
+
+            auto addr = std::stoul(reg_match[2]);
+
+            auto index = std::stoul(reg_match[1]);
+            data[index] = addr;
+            data[index] <<= 32;
+            data[index] += std::stoul(reg_match[3]);
+
+            if (++i; i >= MEM_SIZE)
+                break;
+        }
+
+        _instance->log((CHAR *)("MEMORY: Loaded file - " + dirEntry.path().string()).data());
+        return data;
+    }
+    return {};
 }
 
 VOID RAM::setup(IINSTANCE* instance, IDSIMCKT* dsim)

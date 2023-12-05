@@ -24,7 +24,7 @@ private:
     static constexpr uint8_t CONTROL_SIZE = 9;
     static constexpr uint8_t CA_SIZE = 4;
     static constexpr uint8_t SHIFT_SIZE = 2;
-    static constexpr const char *FILE_NAME = "out.bin";
+    static constexpr const char *FILE_NAME_EXT = ".bin";
 
     using mem = std::array<uint64_t, MEM_SIZE>;
     using word_pins = std::array<vsm::pin, WORD_SIZE>;
