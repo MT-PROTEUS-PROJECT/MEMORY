@@ -16,7 +16,7 @@ std::optional<RAM::mem> RAM::load_file()
     mem data;
     std::fill(data.begin(), data.end(), 0);
 
-    static std::regex reg(R"(([0-9a-fA-F]+)\t([0-9a-fA-F]+)\t([0-9a-fA-F]+)[\r]*)");
+    static std::regex reg(R"(([0-1]{1})\t([0-9a-fA-F]+)\t([0-9a-fA-F]+)\t([0-9a-fA-F]+)[\r]*)");
     std::filesystem::directory_iterator it;
     std::string path = std::filesystem::current_path().string();
     try
@@ -46,12 +46,14 @@ std::optional<RAM::mem> RAM::load_file()
             if (!std::regex_match(line, reg_match, reg))
                 continue;
 
-            auto addr = std::stoul(reg_match[2]);
+            auto addr = std::stoul(reg_match[3]);
 
-            auto index = std::stoul(reg_match[1]);
-            data[index] = addr;
+            auto index = std::stoul(reg_match[2]);
+            data[index] = std::stoul(reg_match[1]);
+            data[index] <<= ADDR_RAM_SIZE;
+            data[index] += addr;
             data[index] <<= 32;
-            data[index] += std::stoul(reg_match[3]);
+            data[index] += std::stoul(reg_match[4]);
 
             if (++i; i >= MEM_SIZE)
                 break;
@@ -79,6 +81,7 @@ VOID RAM::setup(IINSTANCE* instance, IDSIMCKT* dsim)
 
     IC0.init(_instance, "IC0");
     WR.init(_instance, "WR");
+    C.init(_instance, "C");
 
     // OUTPUT
     vsm::model::init_pins(_instance, _pins_D, "D");
@@ -90,6 +93,7 @@ VOID RAM::setup(IINSTANCE* instance, IDSIMCKT* dsim)
     vsm::model::init_pins(_instance, _pins_M, "M");
 
     C0.init(_instance, "C0");
+    BP.init(_instance, "BP");
 
     auto file_data = load_file();
     if (file_data.has_value())
@@ -123,7 +127,11 @@ VOID RAM::simulate(ABSTIME time, DSIMMODES mode)
         _data[addr] <<= WORD_SIZE;
         _data[addr] += vsm::model::make_number(_pins_ID);
     }
-
+    if (C->isnegedge())
+    {
+        _data[addr] &= 0x2C;
+        BP.set(time, 500, SLO);
+    }
     std::bitset<CMD_SIZE> bits(_data[addr]);
     size_t i = 0;
     size_t j = 0;
@@ -162,6 +170,7 @@ VOID RAM::simulate(ABSTIME time, DSIMMODES mode)
     {
         _pins_AR[j].set(time, 500, bits.test(i) ? SHI : SLO);
     }
+    BP.set(time, 500, bits.test(i) ? SHI : SLO);
 }
 
 extern "C"

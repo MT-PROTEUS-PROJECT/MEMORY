@@ -15,7 +15,7 @@ public:
     static constexpr DWORD MODEL_KEY = 0x00000001;
 
 private:
-    static constexpr uint8_t CMD_SIZE = 42;
+    static constexpr uint8_t CMD_SIZE = 43;
     static constexpr uint16_t MEM_SIZE = 1024;
 
     static constexpr uint8_t ADDR_BC1_SIZE = 4;
@@ -47,6 +47,7 @@ private:
     
     vsm::pin IC0;
     vsm::pin WR;
+    vsm::pin C;
 
     //OUTPUT
     addr_pins _pins_A;
@@ -58,6 +59,7 @@ private:
     ram_pins _pins_AR;
 
     vsm::pin C0;
+    vsm::pin BP;
 
     mem _data;
 
